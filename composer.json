@@ -1,0 +1,18 @@
+{
+    "name": "guiop/trabalho2",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Guilherme Opieko Auer"
+        }
+    ],
+    "autoload": {
+        "classmap": ["./"]
+    },
+    
+    "require": {
+        "pecee/simple-router": "5.3.0.5",
+        "nesbot/carbon": "^2.71",
+        "guzzlehttp/guzzle": "^7.8"
+    }
+}

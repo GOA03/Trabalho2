@@ -1,26 +1,29 @@
 <?php
 
-// Inicialização da sessão
+require_once __DIR__ . '/../vendor/autoload.php';
+
+// Inicializa a sessão, se ainda não estiver ativa
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-//Sessão para o usuário admin
-if(!isset($_SESSION['usuarios'])) {
-    $_SESSION['usuarios'] = [
-        'admin' => password_hash("123456", PASSWORD_DEFAULT)
-    ];
-}
+$erro = ''; // Para armazenar mensagens de erro
 
-$erro = '';
+// Utiliza a classe Conexao diretamente
+$bd = Conexao::get(); // Obtém a conexão com o banco
 
 // Lógica de autenticação
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['cadastrar'])) {
     $usuario = $_POST['usuario'] ?? '';
     $senha = $_POST['senha'] ?? '';
 
-    // Verificar credenciais
-    if (isset($_SESSION['usuarios'][$usuario]) && password_verify($senha, $_SESSION['usuarios'][$usuario])) {
+    $stmt = $bd->prepare("SELECT * FROM usuarios WHERE nome = :usuario");
+    $stmt->bindParam(":usuario", $usuario);
+    $stmt->execute();
+
+    $usuarioBanco = $stmt->fetch(PDO::FETCH_OBJ);
+
+    if ($usuarioBanco && password_verify($senha, $usuarioBanco->senha)) {
         $_SESSION['autenticado'] = true;
         $_SESSION['usuario_logado'] = $usuario;
         header('Location: ../views/listar.view.php');
@@ -33,10 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Lógica de logout
 if (isset($_GET['action']) && $_GET['action'] == 'logout') {
     $_SESSION['autenticado'] = false;
-    // Destroi todos os dados associados à sessão atual.
     session_unset();
     session_destroy();
-    // Redireciona para a página de login.
     header('Location: ../views/login.view.php');
     exit();
 }
@@ -45,18 +46,30 @@ if (isset($_GET['action']) && $_GET['action'] == 'logout') {
 if (isset($_POST['cadastrar'])) {
     $usuario = $_POST['usuario'] ?? '';
     $senha = $_POST['senha'] ?? '';
-    if (!isset($_SESSION['usuarios'][$usuario])) { //se o usuário não existir na sessão
-        $_SESSION['usuarios'][$usuario] = password_hash($senha, PASSWORD_DEFAULT); // Hasheando a senha
+
+    $stmt = $bd->prepare("SELECT * FROM usuarios WHERE nome = :usuario");
+    $stmt->bindParam(":usuario", $usuario);
+    $stmt->execute();
+
+    $usuarioExistente = $stmt->fetch(PDO::FETCH_OBJ);
+
+    if (!$usuarioExistente) {
+        $hashedSenha = password_hash($senha, PASSWORD_DEFAULT);
+        $stmt = $bd->prepare("INSERT INTO usuarios (nome, senha) VALUES (:nome, :senha)");
+        $stmt->bindParam(":nome", $usuario);
+        $stmt->bindParam(":senha", $hashedSenha);
+        $stmt->execute();
         $erro = "Cadastro realizado com sucesso!";
     } else {
         $erro = "Usuário já existente!";
     }
 }
 
-// Verificar se o usuário já está autenticado
+// Redireciona conforme o estado de autenticação do usuário
 if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
     header('Location: ../views/listar.view.php');
     exit();
 } else {
     include_once "../views/login.view.php";
 }
+?>

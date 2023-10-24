@@ -40,6 +40,24 @@ h1, h2 {
     box-shadow: 0 0 0 2px rgba(210,105,30, 0.5);
 }
 
+.receita-card {
+    border: 1px solid #FFE4B5;
+    margin-bottom: 0px;
+    transition: background-color 0.3s;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.receita-card:hover {
+    background-color: #FFEBD9;
+}
+
+/* link do nome da receita para não admins*/
+.list-item-link.no-admin {
+    margin-bottom: 0;
+}
+
 .btn-primary, .btn-success {
     background-color: #D2691E;
     border-color: #D2691E;
@@ -49,15 +67,6 @@ h1, h2 {
 .btn-primary:hover, .btn-success:hover {
     background-color: #8B4513;
     border-color: #8B4513;
-}
-
-.list-group-item {
-    transition: background-color 0.3s;
-    border: 1px solid #FFE4B5; /* Moccasin color. */
-}
-
-.list-group-item:hover {
-    background-color: #FFEBD9;
 }
 
 .list-item-link {

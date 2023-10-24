@@ -10,9 +10,14 @@ $controller = new ReceitasController();
 
 // Verificação da ação de excluir
 if (isset($_GET['action']) && $_GET['action'] == 'excluir' && isset($_GET['id'])) {
-    $controller->remover($_GET['id']);
-    header('Location: listar.view.php');
-    exit();
+    if ($_SESSION['usuario_logado'] === 'admin') {
+        $controller->remover($_GET['id']);
+        header('Location: listar.view.php');
+        exit();
+    } else {
+        echo "Acesso restrito ao administrador.";
+        exit();
+    }
 }
 
 $receitas = $controller->listar();
@@ -57,20 +62,24 @@ $receitas = $controller->listar();
             Nenhuma receita foi adicionada ainda.
         </div>
     <?php else: ?>
-        <ul class="list-group">
+        <div class="row">
             <!-- Loop para listar as receitas -->
             <?php foreach($receitas as $receita): ?>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <a href="visualizar.view.php?id=<?php echo $receita->getId(); ?>" class="list-item-link">
-                        <?php echo $receita->getNome(); ?>
-                    </a>
-                    <span>
-                        <a href="editar.view.php?id=<?php echo $receita->getId(); ?>" class="btn btn-light btn-sm mr-2" title="Editar Receita"><i class="fas fa-edit"></i></a>
-                        <a href="listar.view.php?action=excluir&id=<?php echo $receita->getId(); ?>" class="btn btn-danger btn-sm" title="Excluir Receita" onclick="return confirm('Tem certeza que deseja excluir esta receita?');"><i class="fas fa-trash-alt"></i></a>
-                    </span>
-                </li>
+                <div class="col-md-4 mb-4">
+                    <div class="receita-card p-4 d-flex flex-column justify-content-between align-items-center">
+                        <a href="visualizar.view.php?id=<?php echo $receita->getId(); ?>" class="list-item-link <?php echo ($_SESSION['usuario_logado'] !== 'admin') ? 'no-admin' : ''; ?>">
+                            <?php echo $receita->getNome(); ?>
+                        </a>
+                        <span>
+                            <?php if ($_SESSION['usuario_logado'] === 'admin'): ?>
+                                <a href="editar.view.php?id=<?php echo $receita->getId(); ?>" class="btn btn-light btn-sm mr-2" title="Editar Receita"><i class="fas fa-edit"></i></a>
+                                <a href="listar.view.php?action=excluir&id=<?php echo $receita->getId(); ?>" class="btn btn-danger btn-sm" title="Excluir Receita" onclick="return confirm('Tem certeza que deseja excluir esta receita?');"><i class="fas fa-trash-alt"></i></a>
+                            <?php endif; ?>
+                        </span>
+                    </div>
+                </div>
             <?php endforeach; ?>
-        </ul>
+        </div>
     <?php endif; ?>
 </div>
 
