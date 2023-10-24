@@ -1,0 +1,66 @@
+-- Criação da tabela de usuários
+
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    senha VARCHAR(255) NOT NULL
+);
+
+-- Criação da tabela de receitas
+
+CREATE TABLE receitas (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    ingredientes TEXT DEFAULT NULL,
+    modo_preparo TEXT DEFAULT NULL
+);
+
+-- Inserção de receitas de exemplo na tabela
+
+-- Bolo de Chocolate Simples
+INSERT INTO receitas (nome, ingredientes, modo_preparo) 
+VALUES (
+    'Bolo de Chocolate', 
+    '2 xícaras de açúcar\n3 xícaras de farinha de trigo\n1 xícara de leite\n6 colheres (sopa) bem cheias de chocolate\n6 ovos\n1 colher (sopa) de fermento em pó', 
+    '1. Bata as gemas com o açúcar até obter um creme.\n2. Acrescente o leite, a farinha, o chocolate, o fermento e por último as claras batidas em neve.\n3. Asse em forno preaquecido, a 180ºC, por cerca de 40 minutos.'
+);
+
+-- Macarrão à Carbonara
+INSERT INTO receitas (nome, ingredientes, modo_preparo) 
+VALUES (
+    'Macarrão à Carbonara',
+    '200g de espaguete\n100g de pancetta\n2 ovos grandes\nPecorino romano ralado\nSal\nPimenta preta',
+    '1. Cozinhe o espaguete em água salgada até ficar al dente.\n2. Enquanto o macarrão cozinha, frite a pancetta até ficar crocante.\n3. Em uma tigela, bata os ovos e adicione o Pecorino romano ralado.\n4. Adicione o macarrão à pancetta e depois a mistura de ovos.\n5. Sirva imediatamente com pimenta preta por cima.'
+);
+
+-- Risoto de Cogumelos
+INSERT INTO receitas (nome, ingredientes, modo_preparo) 
+VALUES (
+    'Risoto de Cogumelos',
+    '1 xícara de arroz arbóreo\n200g de cogumelos mistos\n1/2 cebola picada\n2 dentes de alho picados\n1/2 xícara de vinho branco\n4 xícaras de caldo de galinha\nQueijo parmesão ralado\nSal\nPimenta preta',
+    '1. Em uma panela, refogue a cebola e o alho até que fiquem translúcidos.\n2. Adicione o arroz e refogue por mais 2 minutos.\n3. Adicione o vinho branco e cozinhe até que evapore.\n4. Comece a adicionar o caldo de galinha, uma concha de cada vez, cozinhando e mexendo até que o líquido seja absorvido.\n5. Quando o arroz estiver quase pronto, adicione os cogumelos e continue a cozinhar.\n6. Sirva com queijo parmesão ralado por cima.'
+);
+
+-- Bolo de Cenoura
+INSERT INTO receitas (nome, ingredientes, modo_preparo) 
+VALUES (
+    'Bolo de Cenoura',
+    '2 cenouras médias raladas\n3 ovos\n2 xícaras de açúcar\n2 xícaras de farinha de trigo\n1 xícara de óleo\n1 colher de fermento em pó',
+    '1. No liquidificador, bata as cenouras, os ovos e o óleo até obter uma mistura homogênea.\n2. Em uma tigela, misture o açúcar e a farinha. Adicione a mistura do liquidificador e mexa bem. Por último, adicione o fermento.\n3. Coloque em uma forma e leve ao forno preaquecido a 180°C por 40 minutos.'
+);
+
+-- Torta de Limão
+INSERT INTO receitas (nome, ingredientes, modo_preparo) 
+VALUES (
+    'Torta de Limão',
+    '1 pacote de biscoito maizena\n100g de manteiga\n1 lata de leite condensado\n3 limões\n2 claras\n4 colheres de açúcar',
+    '1. Triture o biscoito e misture com a manteiga formando uma massa. Pressione em uma forma.\n2. Misture o leite condensado com o suco dos limões e espalhe sobre a massa.\n3. Bata as claras em neve, adicione o açúcar e cubra a torta. Leve ao forno até dourar.'
+);
+
+-- Pudim de Leite
+INSERT INTO receitas (nome, ingredientes, modo_preparo) 
+VALUES (
+    'Pudim de Leite',
+    '1 lata de leite condensado\n2 latas de leite (use a lata de leite condensado como medida)\n3 ovos\n1 xícara de açúcar',
+    '1. No liquidificador, bata o leite condensado, o leite e os ovos.\n2. Em uma forma, caramelize o açúcar e adicione a mistura do liquidificador.\n3. Asse em banho-maria no forno a 180°C por 40 minutos.'
+);
