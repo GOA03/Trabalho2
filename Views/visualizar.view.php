@@ -13,7 +13,7 @@ $id = $_GET['id'];
 $receita = $controller->buscarPorId($id);
 
 if (!$receita) {
-    header('Location: listar.view.php');
+    header('Location: /Trabalho2/receitas');
     exit();
 }
 ?>

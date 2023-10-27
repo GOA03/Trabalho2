@@ -1,33 +1,57 @@
 <?php
+
     require "vendor/autoload.php";
 
     use Pecee\SimpleRouter\SimpleRouter as Router;
 
-    // Verificação inicial para redirecionar baseado no estado de login.
-    Router::get('/', function() {
+    
+    // Rota padrão redireciona para o login
+    Router::get('/Trabalho2/', function() {
         // Se estiver autenticado, redireciona para a lista de receitas.
         if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
-            Router::redirect('/receitas');
+            require './views/listar.view.php';
         } else { // Se não, redireciona para o login.
-            Router::redirect('/login');
+            require __DIR__ . '/views/login.view.php';
         }
     });
 
-    // Teste Ping Pong
-    Router::get('/ping', function(){
-        echo '<h1>Pong</h1>';
+    // Rotas do index para Login 
+    Router::get('/Trabalho2/index.php', function() {
+        require './views/login.view.php';
     });
+
+    // Rota para visualizar uma receita específica
+    Router::get('/Trabalho2/receitas/visualizar/{id}', 'ReceitasController@visualizar');
 
     // Rotas de Login e Logout
-    Router::get('/login', function() {
-        require 'views/login.view.php';
+    Router::get('/Trabalho2/login', function() {
+        require __DIR__ . '/views/login.view.php';
     });
-    Router::post('/login', 'LoginController@authenticate');
-    Router::get('/logout', 'LoginController@logout');
 
-    // Rotas de Receitas
-    Router::get('/receitas', 'ReceitasController@listar');
-    Router::get('/receitas/adicionar', 'ReceitasController@formularioAdicionar');
-    Router::post('/receitas/adicionar', 'ReceitasController@adicionar');
+
+    Router::post('/Trabalho2/login', 'LoginController@authenticate');
+    Router::get('/Trabalho2/logout', 'LoginController@logout');
+
+    // Rotas de listar as receitas
+    Router::get('/Trabalho2/receitas', function() {
+        require './views/listar.view.php';
+    });
+
+    Router::get('/Trabalho2/receitas/adicionar', function() {
+        require './views/adicionar.view.php';
+    });
+
+
+    Router::get('/Trabalho2/receitas/adicionar', 'ReceitasController@formularioAdicionar');
+    Router::post('/Trabalho2/receitas/adicionar', 'ReceitasController@adicionar');
+
+    ///*
+    //Teste do professor :)
+    Router::get('Trabalho2/ping', function() {
+        echo "Pong!";
+    });
+    //*/
 
     Router::start();
+
+?>
