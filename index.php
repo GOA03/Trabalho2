@@ -22,6 +22,9 @@
 
     // Rota para visualizar uma receita específica
     Router::get('/Trabalho2/receitas/visualizar/{id}', 'ReceitasController@visualizar');
+    
+    // Rota para editar uma receita específica
+    Router::get('/Trabalho2/receitas/editar/{id}', 'ReceitasController@editar');
 
     // Rotas de Login e Logout
     Router::get('/Trabalho2/login', function() {
@@ -42,8 +45,8 @@
     });
 
 
-    Router::get('/Trabalho2/receitas/adicionar', 'ReceitasController@formularioAdicionar');
     Router::post('/Trabalho2/receitas/adicionar', 'ReceitasController@adicionar');
+    Router::post('/Trabalho2/receitas/editar/{id}', 'ReceitasController@editar');
 
     ///*
     //Teste do professor :)
