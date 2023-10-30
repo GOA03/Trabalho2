@@ -1,104 +1,111 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+    // Carrega o autoload
+    require_once __DIR__ . '/../vendor/autoload.php';
 
-use Pecee\SimpleRouter\SimpleRouter as Router;
+    use Pecee\SimpleRouter\SimpleRouter as Router;
 
-// Inicializa a sessão, se ainda não estiver ativa
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+    // Verifica o status da sessão
+    if (session_status() == PHP_SESSION_NONE) {
+        // Inicia a sessão
+        session_start();
+    }
 
+    class LoginController {
 
-class LoginController {
+        public static function authenticate() {
+            $erro = '';  // Inicializa a variável de erro
 
-    public static function authenticate() {
-        $erro = ''; // Para armazenar mensagens de erro
+            // Obtém conexão com o banco
+            $bd = Conexao::get();
 
-        // Utiliza a classe Conexao diretamente
-        $bd = Conexao::get(); // Obtém a conexão com o banco
+            // Lógica de autenticação
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['cadastrar'])) {
+                $usuario = $_POST['usuario'] ?? '';
+                $senha = $_POST['senha'] ?? '';
 
-        // Lógica de autenticação
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['cadastrar'])) {
-            $usuario = $_POST['usuario'] ?? '';
-            $senha = $_POST['senha'] ?? '';
+                // Prepara a consulta SQL
+                $stmt = $bd->prepare("SELECT * FROM usuarios WHERE nome = :usuario");
+                $stmt->bindParam(":usuario", $usuario);
+                $stmt->execute();
 
-            $stmt = $bd->prepare("SELECT * FROM usuarios WHERE nome = :usuario");
-            $stmt->bindParam(":usuario", $usuario);
-            $stmt->execute();
+                // Recupera o usuário do banco
+                $usuarioBanco = $stmt->fetch(PDO::FETCH_OBJ);
 
-            $usuarioBanco = $stmt->fetch(PDO::FETCH_OBJ);
+                // Verifica a senha
+                if ($usuarioBanco && password_verify($senha, $usuarioBanco->senha)) {
+                    $_SESSION['autenticado'] = true;
+                    $_SESSION['usuario_logado'] = $usuario;
+                    header('Location: /Trabalho2/receitas');
+                    exit();
+                } else {
+                    $erro = "Credenciais inválidas!";
+                }
+            }
 
-            if ($usuarioBanco && password_verify($senha, $usuarioBanco->senha)) {
-                $_SESSION['autenticado'] = true;
-                $_SESSION['usuario_logado'] = $usuario;
+            // Redireciona conforme autenticação
+            if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
                 header('Location: /Trabalho2/receitas');
                 exit();
             } else {
-                $erro = "Credenciais inválidas!";
+                include_once __DIR__ . "/../views/login.view.php";
             }
         }
 
-        // Redireciona conforme o estado de autenticação do usuário
-        if (isset($_SESSION['autenticado']) && $_SESSION['autenticado'] === true) {
-            header('Location: /Trabalho2/receitas');
+        public static function logout() {
+            // Realiza o logout do usuário
+            $_SESSION['autenticado'] = false;
+            session_unset();
+            session_destroy();
+            header('Location: /Trabalho2/views/login.view.php');  // caminho absoluto
             exit();
-        } else {
+        }
+
+        public static function cadastrar() {
+            $erro = '';  // Inicializa a variável de erro
+
+            // Obtém conexão com o banco
+            $bd = Conexao::get();
+
+            // Lógica de cadastro
+            if (isset($_POST['cadastrar'])) {
+                $usuario = $_POST['usuario'] ?? '';
+                $senha = $_POST['senha'] ?? '';
+
+                // Prepara a consulta SQL
+                $stmt = $bd->prepare("SELECT * FROM usuarios WHERE nome = :usuario");
+                $stmt->bindParam(":usuario", $usuario);
+                $stmt->execute();
+
+                // Verifica se o usuário já existe
+                $usuarioExistente = $stmt->fetch(PDO::FETCH_OBJ);
+
+                // Cadastra o novo usuário
+                if (!$usuarioExistente) {
+                    $hashedSenha = password_hash($senha, PASSWORD_DEFAULT);
+                    $stmt = $bd->prepare("INSERT INTO usuarios (nome, senha) VALUES (:nome, :senha)");
+                    $stmt->bindParam(":nome", $usuario);
+                    $stmt->bindParam(":senha", $hashedSenha);
+                    $stmt->execute();
+                    $erro = "Cadastro realizado com sucesso!";
+                } else {
+                    $erro = "Usuário já existente!";
+                }
+            }
+
+            // Redireciona para a página de login
             include_once __DIR__ . "/../views/login.view.php";
         }
     }
 
-    public static function logout() {
-        // Lógica de logout
-        $_SESSION['autenticado'] = false;
-        session_unset();
-        session_destroy();
-        header('Location: /Trabalho2/views/login.view.php');  // caminho absoluto
-        exit();
-    }
-
-    public static function cadastrar() {
-        $erro = ''; // Para armazenar mensagens de erro
-
-        // Utiliza a classe Conexao diretamente
-        $bd = Conexao::get(); // Obtém a conexão com o banco
-
-        // Lógica de cadastro
+    // Define a ação conforme o método da requisição
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['cadastrar'])) {
-            $usuario = $_POST['usuario'] ?? '';
-            $senha = $_POST['senha'] ?? '';
-
-            $stmt = $bd->prepare("SELECT * FROM usuarios WHERE nome = :usuario");
-            $stmt->bindParam(":usuario", $usuario);
-            $stmt->execute();
-
-            $usuarioExistente = $stmt->fetch(PDO::FETCH_OBJ);
-
-            if (!$usuarioExistente) {
-                $hashedSenha = password_hash($senha, PASSWORD_DEFAULT);
-                $stmt = $bd->prepare("INSERT INTO usuarios (nome, senha) VALUES (:nome, :senha)");
-                $stmt->bindParam(":nome", $usuario);
-                $stmt->bindParam(":senha", $hashedSenha);
-                $stmt->execute();
-                $erro = "Cadastro realizado com sucesso!";
-            } else {
-                $erro = "Usuário já existente!";
-            }
+            LoginController::cadastrar();
+        } else {
+            LoginController::authenticate();
         }
-
-        // Redireciona para a página de login após o cadastro
-        include_once __DIR__ . "/../views/login.view.php";
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'logout') {
+        LoginController::logout();
     }
-}
-
-// Chama a função apropriada com base na rota
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['cadastrar'])) {
-        LoginController::cadastrar();
-    } else {
-        LoginController::authenticate();
-    }
-} elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'logout') {
-    LoginController::logout();
-}
 ?>

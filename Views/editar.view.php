@@ -34,6 +34,7 @@
 
 <!DOCTYPE html>
     <html lang="pt-BR">
+
     <head>
         <title>Editar Receita</title>
         <?php include 'head.php'; ?>
@@ -92,35 +93,36 @@
 
         </style>
     </head>
+
     <body>
 
-    <!-- Barra de Navegação -->
-    <?php include 'navegacao.php'; ?>
+        <!-- Barra de Navegação -->
+        <?php include 'navegacao.php'; ?>
 
-    <div class="container mt-5">
-        <h1>Editar Receita</h1>
-        <form action="/Trabalho2/receitas/editar/<?php echo $receita->getId(); ?>" method="post">
-            <div class="form-group">
-                <label>Nome da Receita</label>
-                <input type="text" name="nome" class="form-control" value="<?php echo $receita->getNome(); ?>" required>
-            </div>
-            <div class="form-group">
-                <label>Ingredientes</label>
-                <textarea name="ingredientes" class="form-control" rows="5" required><?php echo $receita->getIngredientes(); ?></textarea>
-            </div>
-            <div class="form-group">
-                <label>Modo de Preparo</label>
-                <textarea name="modo_preparo" class="form-control" rows="5" required><?php echo $receita->getModoPreparo(); ?></textarea>
-            </div>
-            <input type="hidden" name="id" value="<?php echo $receita->getId(); ?>">
-            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-            <a href="/Trabalho2/receitas" class="btn btn-secondary mr-2"><i class="fas fa-arrow-left"></i> Voltar</a>
-        </form>
-    </div>
+        <!-- Conteúdo Principal -->
+        <div class="container mt-5">
+            <h1>Editar Receita</h1>
+            <form action="/Trabalho2/receitas/editar/<?php echo $receita->getId(); ?>" method="post">
+                <div class="form-group">
+                    <label>Nome da Receita</label>
+                    <input type="text" name="nome" class="form-control" value="<?php echo $receita->getNome(); ?>" required>
+                </div>
+                <div class="form-group">
+                    <label>Ingredientes</label>
+                    <textarea name="ingredientes" class="form-control" rows="5" required><?php echo $receita->getIngredientes(); ?></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Modo de Preparo</label>
+                    <textarea name="modo_preparo" class="form-control" rows="5" required><?php echo $receita->getModoPreparo(); ?></textarea>
+                </div>
+                <input type="hidden" name="id" value="<?php echo $receita->getId(); ?>">
+                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                <a href="/Trabalho2/receitas" class="btn btn-secondary mr-2"><i class="fas fa-arrow-left"></i> Voltar</a>
+            </form>
+        </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <!-- Scripts Bootstrap e jQuery -->
+        <?php include 'bootstrapJQuery.php'; ?>
 
     </body>
 </html>

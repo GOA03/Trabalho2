@@ -13,11 +13,14 @@
         echo "Receita não encontrada. ID: " . (is_null($id) ? "Não fornecido" : $id);
         exit();
     }
-    ?>
+?>
 
-    <!DOCTYPE html>
+<!DOCTYPE html>
+
     <html lang="pt-BR">
+
     <head>
+
         <title>Visualizar Receita</title>
         <?php include 'head.php'; ?>
         <style> /* Movi os estilos para cá devido a view não usar o css do head, não sei pq :) */
@@ -74,29 +77,29 @@
             }
 
         </style>
+
     </head>
+
     <body>
 
-    <!-- Barra de Navegação -->
-    <?php include 'navegacao.php'; ?>
+        <!-- Barra de Navegação -->
+        <?php include 'navegacao.php'; ?>
 
-    <div class="container mt-5">
-        <h1><?php echo $receita->getNome(); ?></h1>
-        <hr>
-        <h4>Ingredientes:</h4>
-        <p><?php echo nl2br($receita->getIngredientes()); ?></p>
-        
-        <h4>Modo de Preparo:</h4>
-        <p><?php echo nl2br($receita->getModoPreparo()); ?></p>
+        <div class="container mt-5">
+            <h1><?php echo $receita->getNome(); ?></h1>
+            <hr>
+            <h4>Ingredientes:</h4>
+            <p><?php echo nl2br($receita->getIngredientes()); ?></p>
+            
+            <h4>Modo de Preparo:</h4>
+            <p><?php echo nl2br($receita->getModoPreparo()); ?></p>
 
-        <a href="/Trabalho2/receitas/editar/<?php echo $receita->getId(); ?>" class="btn btn-primary"><i class="fas fa-edit"></i> Editar Receita</a>
-        <a href="javascript:history.back()" class="btn btn-secondary mr-2"><i class="fas fa-arrow-left"></i> Voltar</a>
-    </div>
+            <a href="/Trabalho2/receitas/editar/<?php echo $receita->getId(); ?>" class="btn btn-primary"><i class="fas fa-edit"></i> Editar Receita</a>
+            <a href="javascript:history.back()" class="btn btn-secondary mr-2"><i class="fas fa-arrow-left"></i> Voltar</a>
+        </div>
 
-    <!-- Scripts Bootstrap e jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <!-- Scripts Bootstrap e jQuery -->
+        <?php include 'bootstrapJQuery.php'; ?>
 
     </body>
 </html>
