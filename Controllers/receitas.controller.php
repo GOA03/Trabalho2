@@ -1,8 +1,8 @@
 <?php
 
-    use Pecee\SimpleRouter\SimpleRouter as Router;
+    require_once __DIR__ . '/../vendor/autoload.php';
 
-    require_once "Conexao.php";  // Certifique-se de incluir a classe de conexão
+    use Pecee\SimpleRouter\SimpleRouter as Router;
 
     class ReceitasController {
         private $bd;  // Armazena a conexão com o banco de dados
@@ -27,12 +27,59 @@
         }
 
         // Método para adicionar uma receita ao banco de dados
-        public function adicionar(Receita $receita) {
+        public function adicionar(Receita $receita = null) {
+            // Verifique se um objeto Receita foi passado
+            if ($receita === null) {
+                // Se não, verifica se os dados do formulário foram enviados
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nome'], $_POST['ingredientes'], $_POST['modo_preparo'])) {
+                    $nome = strip_tags(trim($_POST['nome']));
+                    $ingredientes = strip_tags(trim($_POST['ingredientes']));
+                    $modo_preparo = strip_tags(trim($_POST['modo_preparo']));
+
+                    // Cria um novo objeto Receita com os dados do formulário
+                    $receita = new Receita($nome, $ingredientes, $modo_preparo);
+                } else {
+                    // Se não houver dados do formulário, trata como uma chamada do roteador sem argumentos
+                    echo "Erro: Nenhuma receita fornecida.";
+                    return;
+                }
+            }
+
+            // Prepara a query SQL
             $query = $this->bd->prepare("INSERT INTO receitas(nome, ingredientes, modo_preparo) VALUES(:nome, :ingredientes, :modo_preparo)");
+
+            // Variáveis intermediárias
+            $nomeReceita = $receita->getNome();
+            $ingredientesReceita = $receita->getIngredientes();
+            $modoPreparoReceita = $receita->getModoPreparo();
+
+            // Vincula os parâmetros da query aos valores da receita
+            $query->bindParam(':nome', $nomeReceita);
+            $query->bindParam(':ingredientes', $ingredientesReceita);
+            $query->bindParam(':modo_preparo', $modoPreparoReceita);
+
+            // Executa a query
+            if ($query->execute()) {
+                echo '<script>
+                            alert("Receita adicionada com sucesso!");
+                            setTimeout(function() {
+                                window.location.href = "/Trabalho2/receitas";
+                            });
+                      </script>';
+            } else {
+                echo '<script>alert("Erro ao adicionar a receita. Por favor, tente novamente.");</script>';
+            }
+        }
+
+        // Função para verificar se uma receita já existe no banco de dados (opcional)
+        private function receitaExiste(Receita $receita) {
+            $query = $this->bd->prepare("SELECT COUNT(*) FROM receitas WHERE nome = :nome AND ingredientes = :ingredientes AND modo_preparo = :modo_preparo");
             $query->bindParam(':nome', $receita->getNome());
             $query->bindParam(':ingredientes', $receita->getIngredientes());
             $query->bindParam(':modo_preparo', $receita->getModoPreparo());
             $query->execute();
+
+            return $query->fetchColumn() > 0;
         }
 
         // Método para buscar uma receita específica por seu ID
@@ -52,23 +99,56 @@
         // Método para visualizar uma receita específica
         public function visualizar($id) {
             $receita = $this->buscarPorId($id);
-        
+            
             if ($receita) {
-                include_once './views/visualizar.view.php';
+                include_once './views/visualizar.view.php'; 
             } else {
                 echo "Receita não encontrada.";
             }
+        }        
+
+        // Método para editar uma receita existente usando ID
+        public function editar($id) {
+            // Busque a receita pelo ID
+            $receita = $this->buscarPorId($id);
+
+            // Verifique se a receita foi encontrada
+            if (!$receita) {
+                echo "Receita não encontrada!";
+                return;
+            }
+
+            // Se os dados do formulário forem enviados, atualize a receita no banco de dados.
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nome'], $_POST['ingredientes'], $_POST['modo_preparo'])) {
+                // Obtenha os novos dados do formulário
+                $nome = strip_tags(trim($_POST['nome']));
+                $ingredientes = strip_tags(trim($_POST['ingredientes']));
+                $modo_preparo = strip_tags(trim($_POST['modo_preparo']));
+
+                // Atualize o objeto $receita
+                $receita->setNome($nome);
+                $receita->setIngredientes($ingredientes);
+                $receita->setModoPreparo($modo_preparo);
+
+                // Salve as alterações no banco de dados
+                $query = $this->bd->prepare("UPDATE receitas SET nome = :nome, ingredientes = :ingredientes, modo_preparo = :modo_preparo WHERE id = :id");
+                $query->bindParam(':nome', $nome);
+                $query->bindParam(':ingredientes', $ingredientes);
+                $query->bindParam(':modo_preparo', $modo_preparo);
+                $query->bindParam(':id', $id);
+                if ($query->execute()) {
+                    echo "Receita atualizada com sucesso!";
+                    header('Location: /Trabalho2/receitas');
+                    exit;
+                } else {
+                    echo "Erro ao atualizar a receita.";
+                }
+            }
+
+            // Renderize a view (template) para editar a receita
+            include_once './views/editar.view.php';
         }
 
-        // Método para editar uma receita existente
-        public function editar(Receita $receita) {
-            $query = $this->bd->prepare("UPDATE receitas SET nome = :nome, ingredientes = :ingredientes, modo_preparo = :modo_preparo WHERE id = :id");
-            $query->bindParam(':nome', $receita->getNome());
-            $query->bindParam(':ingredientes', $receita->getIngredientes());
-            $query->bindParam(':modo_preparo', $receita->getModoPreparo());
-            $query->bindParam(':id', $receita->getId());
-            $query->execute();
-        }
 
         // Método para remover uma receita do banco de dados
         public function remover($id) {

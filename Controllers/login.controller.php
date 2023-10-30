@@ -9,8 +9,6 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Importa a classe de conexão (substitua "SeuNamespace" pelo namespace real do seu projeto)
-use Conexao;
 
 class LoginController {
 
@@ -46,7 +44,7 @@ class LoginController {
             header('Location: /Trabalho2/receitas');
             exit();
         } else {
-            include_once __DIR__ . "/../login";
+            include_once __DIR__ . "/../views/login.view.php";
         }
     }
 

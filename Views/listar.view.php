@@ -10,7 +10,7 @@
     if (isset($_GET['action']) && $_GET['action'] == 'excluir' && isset($_GET['id'])) {
         if ($_SESSION['usuario_logado'] === 'admin') {
             $controller->remover($_GET['id']);
-            header('Location: listar.view.php');
+            header('Location: /Trabalho2/receitas');
             exit();
         } else {
             echo "Acesso restrito ao administrador.";
@@ -30,25 +30,7 @@
     <body>
 
     <!-- Barra de Navegação -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Sistema de Receitas</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item active">
-                    <a class="nav-link" href="./receitas">Listar Receitas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="./receitas/adicionar">Adicionar Receita</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-danger" href="login.view.php?action=logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <?php include 'navegacao.php'; ?>
 
     <!-- Conteúdo Principal -->
     <div class="container mt-5">
@@ -71,7 +53,7 @@
                             <span>
                                 <?php if ($_SESSION['usuario_logado'] === 'admin'): ?>
                                     <a href="/Trabalho2/receitas/editar/<?php echo $receita->getId(); ?>" class="btn btn-light btn-sm mr-2" title="Editar Receita"><i class="fas fa-edit"></i></a>
-                                    <a href="/Trabalho2/receitas/excluir/<?php echo $receita->getId(); ?>" class="btn btn-danger btn-sm" title="Excluir Receita" onclick="return confirm('Tem certeza que deseja excluir esta receita?');"><i class="fas fa-trash-alt"></i></a>
+                                    <a href="/Trabalho2/receitas?action=excluir&id=<?php echo $receita->getId(); ?>" class="btn btn-danger btn-sm" title="Excluir Receita" onclick="return confirm('Tem certeza que deseja excluir esta receita?');"><i class="fas fa-trash-alt"></i></a>
                                 <?php endif; ?>
                             </span>
                         </div>
