@@ -63,11 +63,11 @@
             // Verifica o resultado
             if ($query->execute()) {
                 echo '<script>
-                            alert("Receita adicionada com sucesso!");
-                            setTimeout(function() {
-                                window.location.href = "/Trabalho2/receitas";
-                            });
-                    </script>';
+                        alert("Receita adicionada com sucesso!");
+                        setTimeout(function() {
+                            window.location.href = "/Trabalho2/receitas";
+                        });
+                     </script>';
             } else {
                 echo '<script>alert("Erro ao adicionar a receita. Por favor, tente novamente.");</script>';
             }
